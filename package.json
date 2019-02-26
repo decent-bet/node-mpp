@@ -1,0 +1,16 @@
+{
+  "name": "node-mpp",
+  "version": "1.0.0",
+  "description": "node library to perform multiparty protocol (MPP) functionality for contracts on the Vechain Thor blockchain",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "dev <dev@decent.bet>",
+  "license": "MIT",
+  "dependencies": {
+    "thorify": "1.1.0",
+    "web3": "1.0.0-beta.36",
+    "yargs": "^13.2.1"
+  }
+}
