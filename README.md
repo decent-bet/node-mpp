@@ -45,17 +45,29 @@ sending state changing transactions to reduce transaction reverts and wasted ene
 
 ## Commands
 
-### Transactions
+## Transactions
 
-#### sponsor()
+### sponsor()
+
+```
+await mpp.sponsor()
+```
 
 Volunteers to sponsor the contract using the default account linked to the MPP instance' private key.
 
-#### unsponsor()
+### unsponsor()
+
+```
+await mpp.unsponsor()
+```
 
 Removes the default account from being a sponsor of the contract if it had been a sponsor earlier.
 
-#### selectSponsor(sponsor)
+### selectSponsor(sponsor)
+
+```
+await mpp.selectSponsor(sponsor)
+```
 
 **Parameters**
 
@@ -63,7 +75,11 @@ Removes the default account from being a sponsor of the contract if it had been 
 
 Selects a sponsor address. The sponsor must have volunteered to be a sponsor by calling `sponsor()`. This can only be sent by the current contract master.
 
-#### selectMaster(master)
+### selectMaster(master)
+
+```
+await mpp.selectMaster(master)
+```
 
 **Parameters**
 
@@ -71,7 +87,11 @@ Selects a sponsor address. The sponsor must have volunteered to be a sponsor by 
 
 Selects a master address. This can only be sent by the current contract master.
 
-#### addUser(address)
+### addUser(address)
+
+```
+await mpp.addUser(userAddress)
+```
 
 **Parameters**
 
@@ -79,7 +99,11 @@ Selects a master address. This can only be sent by the current contract master.
 
 Adds a new user to the MPP whitelist for the contract. Throws if the user has already been added. This can only be sent by the current contract master.  
 
-#### removeUser(address)
+### removeUser(address)
+
+```
+await mpp.removeUser(userAddress)
+```
 
 **Parameters**
 
@@ -89,6 +113,10 @@ Removes a user from the MPP whitelist of the contract. Throws if the user has no
 
 #### setCreditPlan(credit, recoveryRate)
 
+```
+await mpp.setCreditPlan(credit, recoveryRate)
+```
+
 **Parameters**
 
 * credit - the maximum amount of VTHO (in wei) that can be accumulated
@@ -96,9 +124,13 @@ Removes a user from the MPP whitelist of the contract. Throws if the user has no
 
 Sets a new credit plan for the contract address as defined by the passed credit and recovery rate. This can only be sent by the current contract master.
 
-### Calls
+## Calls
 
-#### isSponsor(address)
+### isSponsor(address)
+
+```
+const isSponsor = await mpp.isSponsor(address)
+```
 
 **Parameters**
 
@@ -106,7 +138,11 @@ Sets a new credit plan for the contract address as defined by the passed credit 
 
 Returns whether an address has volunteered to sponsor the contract.
 
-#### isUser(address)
+### isUser(address)
+
+```
+const isUser = await mpp.isUser(address)
+```
 
 **Parameters**
 
@@ -114,14 +150,26 @@ Returns whether an address has volunteered to sponsor the contract.
 
 Returns whether an address has been added to the contract whitelist.
 
-#### currentSponsor()
+### currentSponsor()
+
+```
+const currentSponsor = await mpp.currentSponsor()
+```
 
 Returns the current selected sponsor for the contract.
 
-#### currentMaster()
+### currentMaster()
+
+```
+const currentMaster = await mpp.currentMaster()
+```
 
 Returns the current master for the contract.
 
-#### getCreditPlan()
+### getCreditPlan()
+
+```
+const creditPlan = await mpp.getCreditPlan()
+```
 
 Returns the active credit plan for the contract.
