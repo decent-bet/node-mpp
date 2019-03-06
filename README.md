@@ -43,8 +43,6 @@ If you intend to handle multiple contract addresses, you would have to use multi
 You can now use the mpp instance to perform any of commands below. Node MPP performs checks before
 sending state changing transactions to reduce transaction reverts and wasted energy.
 
-## Commands
-
 ## Transactions
 
 ### sponsor()
