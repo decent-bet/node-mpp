@@ -66,7 +66,7 @@ function MPP (
      * @type {sponsor}
      */
     this.sponsor = async () => {
-        const isSponsor = this.isSponsor(web3.eth.accounts.wallet[0].address)
+        const isSponsor = await this.isSponsor(web3.eth.accounts.wallet[0].address)
         if(isSponsor)
             throw new Error('Address is already a sponsor for the contract')
         return sponsor()
@@ -77,7 +77,7 @@ function MPP (
      * @type {sponsor}
      */
     this.unsponsor = async () => {
-        const isSponsor = this.isSponsor(web3.eth.accounts.wallet[0].address)
+        const isSponsor = await this.isSponsor(web3.eth.accounts.wallet[0].address)
         if(!isSponsor)
             throw new Error('Address is not a sponsor for the contract')
         return unsponsor()
@@ -150,7 +150,7 @@ function MPP (
      * @returns {*}
      */
     this.removeUser = async address => {
-        const isUser = isUser(address)
+        const isUser = await isUser(address)
         if(!isUser)
             throw new Error(`${address} is not a registered address on the contract whitelist`)
         return removeUser(address)
