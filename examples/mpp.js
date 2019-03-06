@@ -89,6 +89,14 @@ const init = async () => {
             const tx = await mpp.selectSponsor(DEPLOY_ADDRESS)
             console.log('Selected sponsor:', DEPLOY_ADDRESS, 'Tx:', tx.transactionHash)
         }
+
+        // Unsponsor from contract
+        const unsponsorTx = await mpp.unsponsor()
+        console.log('Unsponsored contract. Tx:', unsponsorTx.transactionHash)
+
+        const _isDeployerSponsor = await mpp.isSponsor(DEPLOY_ADDRESS)
+        console.log('Is', DEPLOY_ADDRESS, 'a sponsor?', _isDeployerSponsor)
+
     } catch (e) {
         console.error(e.stack)
     }

@@ -42,7 +42,8 @@ function MPP (
         setCreditPlan,
         selectSponsor,
         selectMaster,
-        sponsor
+        sponsor,
+        unsponsor
     } = require('./lib/contract/tx')(
         contractAddress,
         mppContract,
