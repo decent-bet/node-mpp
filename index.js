@@ -131,8 +131,9 @@ function MPP (
     this.addUser = async address => {
         const _isUser = await isUser(address)
         if(!_isUser) {
-            await addUser(address)
+            const tx = await addUser(address)
             console.log(`Added address to whitelist: ${address}`)
+            return tx
         } else
             console.log(`Address ${address} has already been added to the contract whitelist`)
     }

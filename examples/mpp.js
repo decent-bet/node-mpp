@@ -9,6 +9,8 @@ const CHAIN_TAG = '0xc7'
 const DEPLOY_ADDRESS = require('./contracts/vet-config').chains.solo.from
 const PRIVATE_KEY = require('./contracts/vet-config').chains.solo.privateKey
 
+const USER_ADDRESS = '0xd3ae78222beadb038203be21ed5ce7c9b1bff602'
+
 const init = async () => {
     try {
 
@@ -31,10 +33,10 @@ const init = async () => {
         // View the current credit plan
         console.log('Credit plan:', await mpp.getCreditPlan())
 
-        const isDeployerUser = await mpp.isUser(DEPLOY_ADDRESS)
+        const isUserUser = await mpp.isUser(USER_ADDRESS)
         const isDeployerSponsor = await mpp.isSponsor(DEPLOY_ADDRESS)
-        // Check if deployer is a user
-        console.log('is', DEPLOY_ADDRESS, 'a user?', isDeployerUser)
+        // Check if user is a user
+        console.log('is', USER_ADDRESS, 'a user?', isUserUser)
         // Check if deployer is a sponsor
         console.log('is', DEPLOY_ADDRESS, 'a sponsor?', isDeployerSponsor)
 
@@ -44,6 +46,16 @@ const init = async () => {
             const tx = await mpp.sponsor()
             console.log('Volunteered', DEPLOY_ADDRESS, 'as a sponsor. Tx:', tx)
         }
+
+        // Add USER as a user if it isn't already a user
+        if (!isUserUser) {
+            console.log('Adding', USER_ADDRESS, 'as a user')
+            const tx = await mpp.addUser(USER_ADDRESS)
+            console.log('Added', USER_ADDRESS, 'as a user. Tx:', tx)
+        }
+
+
+
     } catch (e) {
         console.error(e.stack)
     }
