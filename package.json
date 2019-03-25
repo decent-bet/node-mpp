@@ -1,5 +1,5 @@
 {
-  "name": "node-mpp",
+  "name": "@decent-bet/node-mpp",
   "version": "1.0.0",
   "description": "node library to perform multiparty protocol (MPP) functionality for contracts on the Vechain Thor blockchain",
   "main": "index.js",
