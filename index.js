@@ -4,21 +4,24 @@ const {thorify} = require('thorify')
 
 const web3 = new Web3()
 
-thorify(
-    web3,
-    'http://localhost:8669'
-)
-
 /**
  * Node MPP instance
  * @param contractAddress Address of contract
  * @param privateKey Contract master private key
+ * @param thorUrl Thor URL
  * @constructor
  */
 function MPP (
     contractAddress,
-    privateKey
+    privateKey,
+    thorUrl = 'http://localhost:8669'
 ) {
+
+    // Init thorified web3 instance
+    thorify(
+        web3,
+        thorUrl
+    )
 
     // Init MPP contract
     let mppContract = new web3.eth.Contract(
