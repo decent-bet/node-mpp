@@ -28,7 +28,8 @@ Initialize a new node MPP instance like below
 ```
 const mpp = new MPP(
     contractAddress,
-    privateKey
+    privateKey,
+    thorUrl
 )
 ```
 
@@ -36,6 +37,7 @@ const mpp = new MPP(
 
 * contractAddress - Address of contract to perform MPP actions on
 * privateKey - Private key for contract address
+* Thor URL - Thor instance URL
 
 Note: A node MPP instance is designed to handle one contract address on initialization. 
 If you intend to handle multiple contract addresses, you would have to use multiple instances of node MPP.
