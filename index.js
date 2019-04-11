@@ -109,11 +109,11 @@ function MPP (
      * @param master
      * @returns {*}
      */
-    this.selectMaster = async master => {
+    this.setMaster = async master => {
         let currentMaster = await this.currentMaster()
         if(currentMaster === master)
             throw new Error(`Master ${master} is already the current master for the contract`)
-        return selectMaster(master)
+        return setMaster(master)
     }
 
     /**
