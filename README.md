@@ -75,10 +75,10 @@ await mpp.selectSponsor(sponsor)
 
 Selects a sponsor address. The sponsor must have volunteered to be a sponsor by calling `sponsor()`. This can only be sent by the current contract master.
 
-### selectMaster(master)
+### setMaster(master)
 
 ```
-await mpp.selectMaster(master)
+await mpp.setMaster(master)
 ```
 
 **Parameters**
