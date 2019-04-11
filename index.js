@@ -35,9 +35,11 @@ function MPP (
     // Default transaction options
     const defaultTxOptions = {
         from: web3.eth.accounts.wallet[0].address,
-        gas: 1000000,
-        to: mpp.address, // MPP contract address
-        gasPriceCoef: 0
+        gas: 2000000,
+        to: web3.eth.accounts.wallet[0].address, // MPP contract address
+        gasPriceCoef: 0,
+        web3,
+        privateKey
     }
 
     console.log(`signer options: ${defaultTxOptions}`);
