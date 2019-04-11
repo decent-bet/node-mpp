@@ -44,7 +44,7 @@ function MPP (
         removeUser,
         setCreditPlan,
         selectSponsor,
-        selectMaster,
+        setMaster,
         sponsor,
         unsponsor
     } = require('./lib/contract/tx')(
