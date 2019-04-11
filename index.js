@@ -1,6 +1,6 @@
 const mpp = require('./mpp')
 const Web3 = require('web3')
-const {thorify} = require('thorify')
+const { thorify } = require('thorify')
 
 const web3 = new Web3()
 
@@ -9,25 +9,15 @@ const web3 = new Web3()
  * @param contractAddress Address of contract
  * @param privateKey Contract master private key
  * @param thorUrl Thor URL
+ * @param masterAddress Master address
  * @constructor
  */
-function MPP (
-    contractAddress,
-    privateKey,
-    thorUrl = 'http://localhost:8669'
-) {
-
+function MPP(contractAddress, privateKey, thorUrl, masterAddress) {
     // Init thorified web3 instance
-    thorify(
-        web3,
-        thorUrl
-    )
+    thorify(web3, thorUrl || 'http://localhost:8669')
 
     // Init MPP contract
-    let mppContract = new web3.eth.Contract(
-        mpp.abi,
-        mpp.address
-    )
+    let mppContract = new web3.eth.Contract(mpp.abi, mpp.address)
 
     // Add private keys
     web3.eth.accounts.wallet.add(privateKey)
@@ -35,7 +25,11 @@ function MPP (
     // Default transaction options
     const defaultTxOptions = {
         from: web3.eth.accounts.wallet[0].address,
-        gas: 1000000
+        gas: 2000000,
+        to: masterAddress || web3.eth.accounts.wallet[0].address, // MPP contract address
+        gasPriceCoef: 0,
+        web3,
+        privateKey
     }
 
     // Transactions
@@ -60,18 +54,17 @@ function MPP (
         isSponsor,
         currentSponsor,
         master
-    } = require('./lib/contract/call')(
-        contractAddress,
-        mppContract
-    )
+    } = require('./lib/contract/call')(contractAddress, mppContract)
 
     /**
      * Sponsors the contract as the default account
      * @type {sponsor}
      */
     this.sponsor = async () => {
-        const isSponsor = await this.isSponsor(web3.eth.accounts.wallet[0].address)
-        if(isSponsor)
+        const isSponsor = await this.isSponsor(
+            web3.eth.accounts.wallet[0].address
+        )
+        if (isSponsor)
             throw new Error('Address is already a sponsor for the contract')
         return sponsor()
     }
@@ -81,8 +74,10 @@ function MPP (
      * @type {sponsor}
      */
     this.unsponsor = async () => {
-        const isSponsor = await this.isSponsor(web3.eth.accounts.wallet[0].address)
-        if(!isSponsor)
+        const isSponsor = await this.isSponsor(
+            web3.eth.accounts.wallet[0].address
+        )
+        if (!isSponsor)
             throw new Error('Address is not a sponsor for the contract')
         return unsponsor()
     }
@@ -99,8 +94,10 @@ function MPP (
      */
     this.selectSponsor = async sponsor => {
         let currentSponsor = await this.currentSponsor()
-        if(currentSponsor === sponsor)
-            throw new Error(`Sponsor ${sponsor} is already the current sponsor for the contract`)
+        if (currentSponsor === sponsor)
+            throw new Error(
+                `Sponsor ${sponsor} is already the current sponsor for the contract`
+            )
         return selectSponsor(sponsor)
     }
 
@@ -111,8 +108,10 @@ function MPP (
      */
     this.setMaster = async master => {
         let currentMaster = await this.currentMaster()
-        if(currentMaster === master)
-            throw new Error(`Master ${master} is already the current master for the contract`)
+        if (currentMaster === master)
+            throw new Error(
+                `Master ${master} is already the current master for the contract`
+            )
         return setMaster(master)
     }
 
@@ -134,12 +133,14 @@ function MPP (
      */
     this.addUser = async address => {
         const _isUser = await isUser(address)
-        if(!_isUser) {
+        if (!_isUser) {
             const tx = await addUser(address)
             console.log(`Added address to whitelist: ${address}`)
             return tx
         } else
-            console.log(`Address ${address} has already been added to the contract whitelist`)
+            console.log(
+                `Address ${address} has already been added to the contract whitelist`
+            )
     }
 
     /**
@@ -156,8 +157,10 @@ function MPP (
      */
     this.removeUser = async address => {
         const isUser = await isUser(address)
-        if(!isUser)
-            throw new Error(`${address} is not a registered address on the contract whitelist`)
+        if (!isUser)
+            throw new Error(
+                `${address} is not a registered address on the contract whitelist`
+            )
         return removeUser(address)
     }
 
@@ -173,14 +176,8 @@ function MPP (
      * @param recoveryRate amount of VTHO (in wei) accumulated per block to pay for transactions for each user
      * @returns {*}
      */
-    this.setCreditPlan = (
-        credit,
-        recoveryRate
-    ) => setCreditPlan(
-        credit,
-        recoveryRate
-    )
-
+    this.setCreditPlan = (credit, recoveryRate) =>
+        setCreditPlan(credit, recoveryRate)
 }
 
 module.exports = {
