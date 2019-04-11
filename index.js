@@ -9,9 +9,10 @@ const web3 = new Web3()
  * @param contractAddress Address of contract
  * @param privateKey Contract master private key
  * @param thorUrl Thor URL
+ * @param masterAddress Master address
  * @constructor
  */
-function MPP(contractAddress, privateKey, thorUrl, toAddress) {
+function MPP(contractAddress, privateKey, thorUrl, masterAddress) {
     // Init thorified web3 instance
     thorify(web3, thorUrl || 'http://localhost:8669')
 
@@ -25,7 +26,7 @@ function MPP(contractAddress, privateKey, thorUrl, toAddress) {
     const defaultTxOptions = {
         from: web3.eth.accounts.wallet[0].address,
         gas: 2000000,
-        to: toAddress || web3.eth.accounts.wallet[0].address, // MPP contract address
+        to: masterAddress || web3.eth.accounts.wallet[0].address, // MPP contract address
         gasPriceCoef: 0,
         web3,
         privateKey
