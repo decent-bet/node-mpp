@@ -156,8 +156,8 @@ function MPP(contractAddress, privateKey, thorUrl, masterAddress) {
      * @returns {*}
      */
     this.removeUser = async address => {
-        const isUser = await isUser(address)
-        if (!isUser)
+        const _isUser = await isUser(address)
+        if (!_isUser)
             throw new Error(
                 `${address} is not a registered address on the contract whitelist`
             )
