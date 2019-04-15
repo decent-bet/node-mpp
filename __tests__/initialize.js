@@ -4,6 +4,10 @@ const {
 } = require('../index')
 
 const appRoot = require('app-root-path')
+const chaiAsPromised = require('chai-as-promised')
+const chai = require('chai')
+chai.use(chaiAsPromised)
+const expect = chai.expect
 
 const {
     DEPLOY_ADDRESS,
@@ -16,9 +20,7 @@ let SimpleStorage
 let simpleStorage
 
 describe('MPP Init', () => {
-    jasmine.DEFAULT_TIMEOUT_INTERVAL = 30000
-
-    beforeAll(async () => {
+    before(async () => {
         await migrateIfNecessary()
 
         // Newly migrated contracts
@@ -41,7 +43,7 @@ describe('MPP Init', () => {
             invalidKey
         )
 
-        expect(initMpp).toThrowError(TypeError)
+        expect(initMpp).to.throw(Error)
     })
 
     it('should throw if MPP is initialized with invalid thor url', async () => {
@@ -56,7 +58,7 @@ describe('MPP Init', () => {
             await mpp.currentSponsor()
         }
 
-        expectAsync(initMpp()).toBeRejected()
+        await expect(initMpp()).to.eventually.be.rejectedWith(Error)
     })
 
     it('should load MPP if provided with valid address, key and thor url', async () => {
@@ -67,6 +69,6 @@ describe('MPP Init', () => {
 
         const mpp = initMpp()
         const currentMaster = await mpp.currentMaster()
-        expect(currentMaster.toLowerCase()).toEqual(DEPLOY_ADDRESS.toLowerCase())
+        expect(currentMaster.toLowerCase()).to.equal(DEPLOY_ADDRESS.toLowerCase())
     })
 })

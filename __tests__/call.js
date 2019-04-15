@@ -4,6 +4,10 @@ const {
 } = require('../index')
 
 const appRoot = require('app-root-path')
+const chaiAsPromised = require('chai-as-promised')
+const chai = require('chai')
+chai.use(chaiAsPromised)
+const expect = chai.expect
 
 const {
     DEPLOY_ADDRESS,
@@ -15,15 +19,13 @@ const {
 
 const USER_ADDRESS = '0xd3ae78222beadb038203be21ed5ce7c9b1bff602'
 
+let mpp
+
 let SimpleStorage
 let simpleStorage
 
-let mpp
-
 describe('MPP calls', () => {
-    jasmine.DEFAULT_TIMEOUT_INTERVAL = 30000
-
-    beforeAll(async () => {
+    before(async () => {
         await migrateIfNecessary()
 
         // Newly migrated contracts
@@ -44,12 +46,12 @@ describe('MPP calls', () => {
 
     it('should return the current master', async () => {
         const currentMaster = await mpp.currentMaster()
-        expect(currentMaster.toLowerCase()).toEqual(DEPLOY_ADDRESS.toLowerCase())
+        expect(currentMaster.toLowerCase()).to.equal(DEPLOY_ADDRESS.toLowerCase())
     })
 
     it('should return the current sponsor', async () => {
         const currentSponsor = await mpp.currentSponsor()
-        expect(currentSponsor).toEqual(EMPTY_ADDRESS)
+        expect(currentSponsor).to.equal(EMPTY_ADDRESS)
     })
 
     it('should return the current credit plan', async () => {
@@ -58,17 +60,17 @@ describe('MPP calls', () => {
             recoveryRate
         } = await mpp.getCreditPlan()
 
-        expect(credit).toEqual('0')
-        expect(recoveryRate).toEqual('0')
+        expect(credit).to.equal('0')
+        expect(recoveryRate).to.equal('0')
     })
 
     it(`should return whether ${USER_ADDRESS} is a user`, async () => {
         const isUser = await mpp.isUser(USER_ADDRESS)
-        expect(isUser).toEqual(false)
+        expect(isUser).to.equal(false)
     })
 
     it(`should return whether ${DEPLOY_ADDRESS} has volunteered to be a sponsor`, async () => {
         const isSponsor = await mpp.isSponsor(DEPLOY_ADDRESS)
-        expect(isSponsor).toEqual(false)
+        expect(isSponsor).to.equal(false)
     })
 })
