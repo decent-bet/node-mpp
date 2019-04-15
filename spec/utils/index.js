@@ -4,6 +4,8 @@ const DEPLOY_ADDRESS = require(`${appRoot}/examples/contracts/vet-config`).chain
 const PRIVATE_KEY = require(`${appRoot}/examples/contracts/vet-config`).chains.solo.privateKey
 const SOLO_CHAIN_TAG = '0xa4'
 
+const EMPTY_ADDRESS = '0x0000000000000000000000000000000000000000'
+
 const migrateIfNecessary = () => new Promise((resolve, reject) => {
     const exec = require('child_process').exec
     const process = `cd ${appRoot}/examples/contracts; rm -rf build; truffle compile; npm run migrate;`
@@ -18,6 +20,7 @@ const migrateIfNecessary = () => new Promise((resolve, reject) => {
 
 module.exports = {
     DEPLOY_ADDRESS,
+    EMPTY_ADDRESS,
     PRIVATE_KEY,
     SOLO_CHAIN_TAG,
     migrateIfNecessary
