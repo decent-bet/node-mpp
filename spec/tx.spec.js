@@ -5,11 +5,14 @@ const {
 
 const BigNumber = require('bignumber.js')
 
-const SimpleStorage = require('../examples/contracts/build/contracts/SimpleStorage')
-const CHAIN_TAG = '0xc7'
+const appRoot = require('app-root-path')
 
-const DEPLOY_ADDRESS = require('../examples/contracts/vet-config').chains.solo.from
-const PRIVATE_KEY = require('../examples/contracts/vet-config').chains.solo.privateKey
+const {
+    DEPLOY_ADDRESS,
+    PRIVATE_KEY,
+    SOLO_CHAIN_TAG,
+    migrateIfNecessary
+} = require('./utils')
 
 const USER_ADDRESS = '0xd3ae78222beadb038203be21ed5ce7c9b1bff602'
 
@@ -19,6 +22,9 @@ const RECOVERY_RATE =
         .dividedBy(86400) // Seconds in day
         .dividedBy(10)    // VET blocktime
         .toFixed(0)
+
+let SimpleStorage
+let simpleStorage
 
 describe('MPP txns', () => {
     it(`should throw if ${DEPLOY_ADDRESS} unvolunteers as sponsor and is not a sponsor`, async () => {

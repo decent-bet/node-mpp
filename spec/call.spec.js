@@ -3,17 +3,37 @@ const {
     web3
 } = require('../index')
 
-const BigNumber = require('bignumber.js')
+const appRoot = require('app-root-path')
 
-const SimpleStorage = require('../examples/contracts/build/contracts/SimpleStorage')
-const CHAIN_TAG = '0xc7'
-
-const DEPLOY_ADDRESS = require('../examples/contracts/vet-config').chains.solo.from
-const PRIVATE_KEY = require('../examples/contracts/vet-config').chains.solo.privateKey
+const {
+    DEPLOY_ADDRESS,
+    PRIVATE_KEY,
+    SOLO_CHAIN_TAG,
+    migrateIfNecessary
+} = require('./utils')
 
 const USER_ADDRESS = '0xd3ae78222beadb038203be21ed5ce7c9b1bff602'
 
+let SimpleStorage
+let simpleStorage
+
 describe('MPP calls', () => {
+    jasmine.DEFAULT_TIMEOUT_INTERVAL = 30000
+
+    beforeAll(async () => {
+        await migrateIfNecessary()
+
+        // Newly migrated contracts
+        SimpleStorage = require(`${appRoot}/examples/contracts/build/contracts/SimpleStorage`)
+        console.log('Migrated SimpleStorage', SimpleStorage.chain_tags[SOLO_CHAIN_TAG].address)
+
+        // Initialize a new SimpleStorage contract instance
+        simpleStorage = new web3.eth.Contract(
+            SimpleStorage.abi,
+            SimpleStorage.chain_tags[SOLO_CHAIN_TAG].address
+        )
+    })
+
     it('should return the current master', async () => {
 
     })

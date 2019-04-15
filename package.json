@@ -9,10 +9,11 @@
   "author": "dev <dev@decent.bet>",
   "license": "MIT",
   "dependencies": {
+    "app-root-path": "^2.2.1",
     "bignumber.js": "^8.1.1",
     "jasmine": "^3.4.0",
     "thorify": "1.1.0",
-    "web3": "^1.0.0-beta.52",
+    "web3": "^1.0.0-beta.36",
     "yargs": "^13.2.1"
   }
 }
