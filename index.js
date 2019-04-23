@@ -6,13 +6,13 @@ const web3 = new Web3()
 
 /**
  * Node MPP instance
- * @param contractAddress Address of contract
+ * @param contractAddresses name:address key-value pairs for contracts to perform MPP actions on
  * @param privateKey Contract master private key
  * @param thorUrl Thor URL
  * @constructor
  */
 function MPP (
-    contractAddress,
+    contractAddresses,
     privateKey,
     thorUrl = 'http://localhost:8669'
 ) {
@@ -38,148 +38,153 @@ function MPP (
         gas: 1000000
     }
 
-    // Transactions
-    const {
-        addUser,
-        removeUser,
-        setCreditPlan,
-        selectSponsor,
-        setMaster,
-        sponsor,
-        unsponsor
-    } = require('./lib/contract/tx')(
-        contractAddress,
-        mppContract,
-        defaultTxOptions
-    )
+    function MppMethods (contractAddress) {
+        // Transactions
+        const {
+            addUser,
+            removeUser,
+            setCreditPlan,
+            selectSponsor,
+            setMaster,
+            sponsor,
+            unsponsor
+        } = require('./lib/contract/tx')(
+            contractAddress,
+            mppContract,
+            defaultTxOptions
+        )
 
-    // Calls
-    const {
-        creditPlan,
-        isUser,
-        isSponsor,
-        currentSponsor,
-        master
-    } = require('./lib/contract/call')(
-        contractAddress,
-        mppContract
-    )
+        // Calls
+        const {
+            creditPlan,
+            isUser,
+            isSponsor,
+            currentSponsor,
+            master
+        } = require('./lib/contract/call')(
+            contractAddress,
+            mppContract
+        )
 
-    /**
-     * Sponsors the contract as the default account
-     * @type {sponsor}
-     */
-    this.sponsor = async () => {
-        const isSponsor = await this.isSponsor(web3.eth.accounts.wallet[0].address)
-        if(isSponsor)
-            throw new Error('Address is already a sponsor for the contract')
-        return sponsor()
+        /**
+         * Sponsors the contract as the default account
+         * @type {sponsor}
+         */
+        this.sponsor = async () => {
+            const isSponsor = await this.isSponsor(web3.eth.accounts.wallet[0].address)
+            if(isSponsor)
+                throw new Error('Address is already a sponsor for the contract')
+            return sponsor()
+        }
+
+        /**
+         * Unsponsors if the default account is a sponsor for the contract.
+         * @type {sponsor}
+         */
+        this.unsponsor = async () => {
+            const isSponsor = await this.isSponsor(web3.eth.accounts.wallet[0].address)
+            if(!isSponsor)
+                throw new Error('Address is not a sponsor for the contract')
+            return unsponsor()
+        }
+
+        /**
+         * Returns whether an address is a sponsor for the contract
+         */
+        this.isSponsor = address => isSponsor(address)
+
+        /**
+         * Selects a sponsor for the contract. Callable by a contract master
+         * @param sponsor
+         * @returns {*}
+         */
+        this.selectSponsor = async sponsor => {
+            let currentSponsor = await this.currentSponsor()
+            if(currentSponsor === sponsor)
+                throw new Error(`Sponsor ${sponsor} is already the current sponsor for the contract`)
+            return selectSponsor(sponsor)
+        }
+
+        /**
+         * Selects a new master for the contract. Callable by the current contract master.
+         * @param master
+         * @returns {*}
+         */
+        this.setMaster = async master => {
+            let currentMaster = await this.currentMaster()
+            if(currentMaster.toLowerCase() === master.toLowerCase())
+                throw new Error(`Master ${master} is already the current master for the contract`)
+            return setMaster(master)
+        }
+
+        /**
+         * Returns the current sponsor for the contract.
+         * @type {currentSponsor}
+         */
+        this.currentSponsor = currentSponsor
+
+        /**
+         * Returns the current master for the contract.
+         * @type {master}
+         */
+        this.currentMaster = master
+
+        /**
+         * Whitelists a provided address in the contract.
+         * @param address
+         */
+        this.addUser = async address => {
+            const _isUser = await isUser(address)
+            if(!_isUser) {
+                const tx = await addUser(address)
+                console.log(`Added address to whitelist: ${address}`)
+                return tx
+            } else
+                console.log(`Address ${address} has already been added to the contract whitelist`)
+        }
+
+        /**
+         * Returns whether an address is included in the contract whitelist
+         * @param address
+         * @returns {*}
+         */
+        this.isUser = address => isUser(address)
+
+        /**
+         * Removes an address from the contracts' whitelist.
+         * @param address
+         * @returns {*}
+         */
+        this.removeUser = async address => {
+            const _isUser = await isUser(address)
+            if(!_isUser)
+                throw new Error(`${address} is not a registered address on the contract whitelist`)
+            return removeUser(address)
+        }
+
+        /**
+         * Returns the current credit plan for the contract
+         */
+        this.getCreditPlan = creditPlan
+
+        /**
+         * Sets a new credit plan for the contract.
+         * Callable by the master of the contract.
+         * @param credit the maximum amount of VTHO (in wei) that can be accumulated
+         * @param recoveryRate amount of VTHO (in wei) accumulated per block to pay for transactions for each user
+         * @returns {*}
+         */
+        this.setCreditPlan = (
+            credit,
+            recoveryRate
+        ) => setCreditPlan(
+            credit,
+            recoveryRate
+        )
     }
 
-    /**
-     * Unsponsors if the default account is a sponsor for the contract.
-     * @type {sponsor}
-     */
-    this.unsponsor = async () => {
-        const isSponsor = await this.isSponsor(web3.eth.accounts.wallet[0].address)
-        if(!isSponsor)
-            throw new Error('Address is not a sponsor for the contract')
-        return unsponsor()
-    }
-
-    /**
-     * Returns whether an address is a sponsor for the contract
-     */
-    this.isSponsor = address => isSponsor(address)
-
-    /**
-     * Selects a sponsor for the contract. Callable by a contract master
-     * @param sponsor
-     * @returns {*}
-     */
-    this.selectSponsor = async sponsor => {
-        let currentSponsor = await this.currentSponsor()
-        if(currentSponsor === sponsor)
-            throw new Error(`Sponsor ${sponsor} is already the current sponsor for the contract`)
-        return selectSponsor(sponsor)
-    }
-
-    /**
-     * Selects a new master for the contract. Callable by the current contract master.
-     * @param master
-     * @returns {*}
-     */
-    this.setMaster = async master => {
-        let currentMaster = await this.currentMaster()
-        if(currentMaster.toLowerCase() === master.toLowerCase())
-            throw new Error(`Master ${master} is already the current master for the contract`)
-        return setMaster(master)
-    }
-
-    /**
-     * Returns the current sponsor for the contract.
-     * @type {currentSponsor}
-     */
-    this.currentSponsor = currentSponsor
-
-    /**
-     * Returns the current master for the contract.
-     * @type {master}
-     */
-    this.currentMaster = master
-
-    /**
-     * Whitelists a provided address in the contract.
-     * @param address
-     */
-    this.addUser = async address => {
-        const _isUser = await isUser(address)
-        if(!_isUser) {
-            const tx = await addUser(address)
-            console.log(`Added address to whitelist: ${address}`)
-            return tx
-        } else
-            console.log(`Address ${address} has already been added to the contract whitelist`)
-    }
-
-    /**
-     * Returns whether an address is included in the contract whitelist
-     * @param address
-     * @returns {*}
-     */
-    this.isUser = address => isUser(address)
-
-    /**
-     * Removes an address from the contracts' whitelist.
-     * @param address
-     * @returns {*}
-     */
-    this.removeUser = async address => {
-        const _isUser = await isUser(address)
-        if(!_isUser)
-            throw new Error(`${address} is not a registered address on the contract whitelist`)
-        return removeUser(address)
-    }
-
-    /**
-     * Returns the current credit plan for the contract
-     */
-    this.getCreditPlan = creditPlan
-
-    /**
-     * Sets a new credit plan for the contract.
-     * Callable by the master of the contract.
-     * @param credit the maximum amount of VTHO (in wei) that can be accumulated
-     * @param recoveryRate amount of VTHO (in wei) accumulated per block to pay for transactions for each user
-     * @returns {*}
-     */
-    this.setCreditPlan = (
-        credit,
-        recoveryRate
-    ) => setCreditPlan(
-        credit,
-        recoveryRate
-    )
+    for (const contractName in Object.keys(contractAddresses))
+        this[contractName] = new MppMethods(contractAddresses[contractName])
 
 }
 
