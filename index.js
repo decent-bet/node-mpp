@@ -183,9 +183,9 @@ function MPP (
         )
     }
 
-    for (const contractName in Object.keys(contractAddresses))
-        this[contractName] = new MppMethods(contractAddresses[contractName])
-
+    for (const contractName in contractAddresses)
+        if (contractAddresses.hasOwnProperty(contractName))
+            this[contractName] = new MppMethods(contractAddresses[contractName])
 }
 
 module.exports = {

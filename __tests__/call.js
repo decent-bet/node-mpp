@@ -10,6 +10,7 @@ chai.use(chaiAsPromised)
 const expect = chai.expect
 
 const {
+    CONTRACT_NAME_SIMPLE_STORAGE,
     DEPLOY_ADDRESS,
     EMPTY_ADDRESS,
     PRIVATE_KEY,
@@ -39,18 +40,18 @@ describe('MPP calls', () => {
         )
 
         mpp = new MPP(
-            SimpleStorage.chain_tags[SOLO_CHAIN_TAG].address,
+            {[CONTRACT_NAME_SIMPLE_STORAGE]: SimpleStorage.chain_tags[SOLO_CHAIN_TAG].address},
             PRIVATE_KEY
         )
     })
 
     it('should return the current master', async () => {
-        const currentMaster = await mpp.currentMaster()
+        const currentMaster = await mpp.simpleStorage.currentMaster()
         expect(currentMaster.toLowerCase()).to.equal(DEPLOY_ADDRESS.toLowerCase())
     })
 
     it('should return the current sponsor', async () => {
-        const currentSponsor = await mpp.currentSponsor()
+        const currentSponsor = await mpp.simpleStorage.currentSponsor()
         expect(currentSponsor).to.equal(EMPTY_ADDRESS)
     })
 
@@ -58,19 +59,19 @@ describe('MPP calls', () => {
         const {
             credit,
             recoveryRate
-        } = await mpp.getCreditPlan()
+        } = await mpp.simpleStorage.getCreditPlan()
 
         expect(credit).to.equal('0')
         expect(recoveryRate).to.equal('0')
     })
 
     it(`should return whether ${USER_ADDRESS} is a user`, async () => {
-        const isUser = await mpp.isUser(USER_ADDRESS)
+        const isUser = await mpp.simpleStorage.isUser(USER_ADDRESS)
         expect(isUser).to.equal(false)
     })
 
     it(`should return whether ${DEPLOY_ADDRESS} has volunteered to be a sponsor`, async () => {
-        const isSponsor = await mpp.isSponsor(DEPLOY_ADDRESS)
+        const isSponsor = await mpp.simpleStorage.isSponsor(DEPLOY_ADDRESS)
         expect(isSponsor).to.equal(false)
     })
 })

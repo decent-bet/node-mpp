@@ -12,6 +12,7 @@ chai.use(chaiAsPromised)
 const expect = chai.expect
 
 const {
+    CONTRACT_NAME_SIMPLE_STORAGE,
     DEPLOY_ADDRESS,
     PRIVATE_KEY,
     SOLO_CHAIN_TAG,
@@ -47,62 +48,62 @@ describe('MPP txns', () => {
         )
 
         mpp = new MPP(
-            SimpleStorage.chain_tags[SOLO_CHAIN_TAG].address,
+            {[CONTRACT_NAME_SIMPLE_STORAGE]: SimpleStorage.chain_tags[SOLO_CHAIN_TAG].address},
             PRIVATE_KEY
         )
     })
 
     it(`should throw if ${DEPLOY_ADDRESS} un-volunteers as sponsor and is not a sponsor`, async () => {
-        await expect(mpp.unsponsor()).to.eventually.be.rejectedWith(Error)
+        await expect(mpp.simpleStorage.unsponsor()).to.eventually.be.rejectedWith(Error)
     })
 
     it(`should throw if ${DEPLOY_ADDRESS} is selected as sponsor and has not volunteered to be a sponsor`, async () => {
-        await expect(mpp.selectSponsor(DEPLOY_ADDRESS)).to.eventually.be.rejectedWith(Error)
+        await expect(mpp.simpleStorage.selectSponsor(DEPLOY_ADDRESS)).to.eventually.be.rejectedWith(Error)
     })
 
     it(`should volunteer ${DEPLOY_ADDRESS} as sponsor`, async () => {
-        await mpp.sponsor()
-        const isSponsor = await mpp.isSponsor(DEPLOY_ADDRESS)
+        await mpp.simpleStorage.sponsor()
+        const isSponsor = await mpp.simpleStorage.isSponsor(DEPLOY_ADDRESS)
         expect(isSponsor).to.equal(true)
     })
 
     it(`should throw if ${DEPLOY_ADDRESS} volunteers as a sponsor and is already sponsor`, async () => {
-        await expect(mpp.sponsor()).to.eventually.be.rejectedWith(Error)
+        await expect(mpp.simpleStorage.sponsor()).to.eventually.be.rejectedWith(Error)
     })
 
     it(`should allow an address to be added as MPP user`, async () => {
-        await mpp.addUser(USER_ADDRESS)
-        const isUser = await mpp.isUser(USER_ADDRESS)
+        await mpp.simpleStorage.addUser(USER_ADDRESS)
+        const isUser = await mpp.simpleStorage.isUser(USER_ADDRESS)
         expect(isUser).to.equal(true)
     })
 
     it(`should allow an address to be removed from being an MPP user`, async () => {
-        await mpp.removeUser(USER_ADDRESS)
-        const isUser = await mpp.isUser(USER_ADDRESS)
+        await mpp.simpleStorage.removeUser(USER_ADDRESS)
+        const isUser = await mpp.simpleStorage.isUser(USER_ADDRESS)
         expect(isUser).to.equal(false)
     })
 
     it(`should throw if an address is removed as a user if it isn't an MPP user`, async () => {
-        await expect(mpp.removeUser(USER_ADDRESS)).to.eventually.be.rejectedWith(Error)
+        await expect(mpp.simpleStorage.removeUser(USER_ADDRESS)).to.eventually.be.rejectedWith(Error)
     })
 
     it(`should allow credit plan to be updated`, async () => {
-        await mpp.setCreditPlan(CREDIT, RECOVERY_RATE)
+        await mpp.simpleStorage.setCreditPlan(CREDIT, RECOVERY_RATE)
         const {
             credit,
             recoveryRate
-        } = await mpp.getCreditPlan()
+        } = await mpp.simpleStorage.getCreditPlan()
         expect(credit).to.equal(CREDIT)
         expect(recoveryRate).to.equal(RECOVERY_RATE)
     })
 
     it(`should throw if current master is set as new master`, async () => {
-        await expect(mpp.setMaster(DEPLOY_ADDRESS)).to.eventually.be.rejectedWith(Error)
+        await expect(mpp.simpleStorage.setMaster(DEPLOY_ADDRESS)).to.eventually.be.rejectedWith(Error)
     })
 
     it(`should allow new address to be set as master`, async () => {
-        await mpp.setMaster(USER_ADDRESS)
-        const master = await mpp.currentMaster()
+        await mpp.simpleStorage.setMaster(USER_ADDRESS)
+        const master = await mpp.simpleStorage.currentMaster()
         expect(master.toLowerCase()).to.equal(USER_ADDRESS.toLowerCase())
     })
 })

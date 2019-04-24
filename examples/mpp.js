@@ -12,6 +12,7 @@ const DEPLOY_ADDRESS = require('./contracts/vet-config').chains.solo.from
 const PRIVATE_KEY = require('./contracts/vet-config').chains.solo.privateKey
 
 const USER_ADDRESS = '0xd3ae78222beadb038203be21ed5ce7c9b1bff602'
+const CONTRACT_NAME_SIMPLE_STORAGE = 'simpleStorage'
 
 const CREDIT = web3.utils.toWei('100000', 'ether')
 const RECOVERY_RATE =
@@ -23,27 +24,21 @@ const RECOVERY_RATE =
 const init = async () => {
     try {
 
-        // Initialize a new SimpleStorage contract instance
-        const simpleStorage = new web3.eth.Contract(
-            SimpleStorage.abi,
-            SimpleStorage.chain_tags[CHAIN_TAG].address
-        )
-
         // Initialize MPP
         const mpp = new MPP(
-            SimpleStorage.chain_tags[CHAIN_TAG].address,
+            {[CONTRACT_NAME_SIMPLE_STORAGE]: SimpleStorage.chain_tags[CHAIN_TAG].address},
             PRIVATE_KEY
         )
 
         // View the current master
-        console.log('Current master:', await mpp.currentMaster())
+        console.log('Current master:', await mpp.simpleStorage.currentMaster())
         // View the current sponsor
-        console.log('Current sponsor:', await mpp.currentSponsor())
+        console.log('Current sponsor:', await mpp.simpleStorage.currentSponsor())
         // View the current credit plan
-        console.log('Credit plan:', await mpp.getCreditPlan())
+        console.log('Credit plan:', await mpp.simpleStorage.getCreditPlan())
 
-        const isUserUser = await mpp.isUser(USER_ADDRESS)
-        const isDeployerSponsor = await mpp.isSponsor(DEPLOY_ADDRESS)
+        const isUserUser = await mpp.simpleStorage.isUser(USER_ADDRESS)
+        const isDeployerSponsor = await mpp.simpleStorage.isSponsor(DEPLOY_ADDRESS)
         // Check if user is a user
         console.log('is', USER_ADDRESS, 'a user?', isUserUser)
         // Check if deployer is a sponsor
@@ -52,19 +47,19 @@ const init = async () => {
         // Make deployer volunteer as a sponsor if it isn't already a sponsor
         if (!isDeployerSponsor) {
             console.log('Volunteering', DEPLOY_ADDRESS, 'as a sponsor')
-            const tx = await mpp.sponsor()
+            const tx = await mpp.simpleStorage.sponsor()
             console.log('Volunteered', DEPLOY_ADDRESS, 'as a sponsor. Tx:', tx.transactionHash)
         }
 
         // Add USER as a user if it isn't already a user
         if (!isUserUser) {
             console.log('Adding', USER_ADDRESS, 'as a user')
-            const tx = await mpp.addUser(USER_ADDRESS)
+            const tx = await mpp.simpleStorage.addUser(USER_ADDRESS)
             console.log('Added', USER_ADDRESS, 'as a user. Tx:', tx.transactionHash)
         }
 
         // Sets the MPP credit plan
-        const setCreditPlanTx = await mpp.setCreditPlan(
+        const setCreditPlanTx = await mpp.simpleStorage.setCreditPlan(
             CREDIT,
             RECOVERY_RATE
         )
@@ -78,23 +73,23 @@ const init = async () => {
         )
 
         // View updated credit plan
-        console.log('Updated credit plan:', await mpp.getCreditPlan())
+        console.log('Updated credit plan:', await mpp.simpleStorage.getCreditPlan())
 
         // View current sponsor
-        const currentSponsor = await mpp.currentSponsor()
+        const currentSponsor = await mpp.simpleStorage.currentSponsor()
         console.log('Current sponsor:', currentSponsor)
 
         // Selects DEPLOY_ADDRESS as sponsor if it isn't already
         if(currentSponsor !== DEPLOY_ADDRESS) {
-            const tx = await mpp.selectSponsor(DEPLOY_ADDRESS)
+            const tx = await mpp.simpleStorage.selectSponsor(DEPLOY_ADDRESS)
             console.log('Selected sponsor:', DEPLOY_ADDRESS, 'Tx:', tx.transactionHash)
         }
 
         // Unsponsor from contract
-        const unsponsorTx = await mpp.unsponsor()
+        const unsponsorTx = await mpp.simpleStorage.unsponsor()
         console.log('Unsponsored contract. Tx:', unsponsorTx.transactionHash)
 
-        const _isDeployerSponsor = await mpp.isSponsor(DEPLOY_ADDRESS)
+        const _isDeployerSponsor = await mpp.simpleStorage.isSponsor(DEPLOY_ADDRESS)
         console.log('Is', DEPLOY_ADDRESS, 'a sponsor?', _isDeployerSponsor)
 
     } catch (e) {

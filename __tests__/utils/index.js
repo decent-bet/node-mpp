@@ -5,6 +5,7 @@ const PRIVATE_KEY = require(`${appRoot}/examples/contracts/vet-config`).chains.s
 const SOLO_CHAIN_TAG = '0xa4'
 
 const EMPTY_ADDRESS = '0x0000000000000000000000000000000000000000'
+const CONTRACT_NAME_SIMPLE_STORAGE = 'simpleStorage'
 
 const migrateIfNecessary = () => new Promise((resolve, reject) => {
     const exec = require('child_process').exec
@@ -19,6 +20,7 @@ const migrateIfNecessary = () => new Promise((resolve, reject) => {
 })
 
 module.exports = {
+    CONTRACT_NAME_SIMPLE_STORAGE,
     DEPLOY_ADDRESS,
     EMPTY_ADDRESS,
     PRIVATE_KEY,

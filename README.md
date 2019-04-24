@@ -27,7 +27,7 @@ Initialize a new node MPP instance like below
 
 ```
 const mpp = new MPP(
-    contractAddress,
+    contractAddresses,
     privateKey,
     thorUrl
 )

@@ -10,6 +10,7 @@ chai.use(chaiAsPromised)
 const expect = chai.expect
 
 const {
+    CONTRACT_NAME_SIMPLE_STORAGE,
     DEPLOY_ADDRESS,
     PRIVATE_KEY,
     SOLO_CHAIN_TAG,
@@ -39,7 +40,7 @@ describe('MPP Init', () => {
 
         // Initialize MPP
         const initMpp = () => new MPP(
-            SimpleStorage.chain_tags[SOLO_CHAIN_TAG].address,
+            {[CONTRACT_NAME_SIMPLE_STORAGE]: SimpleStorage.chain_tags[SOLO_CHAIN_TAG].address},
             invalidKey
         )
 
@@ -50,7 +51,7 @@ describe('MPP Init', () => {
         // Initialize MPP
         const initMpp = async () => {
             const mpp = new MPP(
-                SimpleStorage.chain_tags[SOLO_CHAIN_TAG].address,
+                {[CONTRACT_NAME_SIMPLE_STORAGE]: SimpleStorage.chain_tags[SOLO_CHAIN_TAG].address},
                 PRIVATE_KEY,
                 'http://localhost:1234'
             )
@@ -63,12 +64,12 @@ describe('MPP Init', () => {
 
     it('should load MPP if provided with valid address, key and thor url', async () => {
         const initMpp = () => new MPP(
-            SimpleStorage.chain_tags[SOLO_CHAIN_TAG].address,
+            {[CONTRACT_NAME_SIMPLE_STORAGE]: SimpleStorage.chain_tags[SOLO_CHAIN_TAG].address},
             PRIVATE_KEY
         )
 
         const mpp = initMpp()
-        const currentMaster = await mpp.currentMaster()
+        const currentMaster = await mpp.simpleStorage.currentMaster()
         expect(currentMaster.toLowerCase()).to.equal(DEPLOY_ADDRESS.toLowerCase())
     })
 })
