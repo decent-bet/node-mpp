@@ -27,7 +27,7 @@ Initialize a new node MPP instance like below
 
 ```
 const mpp = new MPP(
-    contractAddress,
+    contractAddresses,
     privateKey,
     thorUrl
 )
@@ -35,7 +35,7 @@ const mpp = new MPP(
 
 **Parameters**
 
-* contractAddress - Address of contract to perform MPP actions on
+* contractAddresses - Object containing name:address key-value pairs for contracts to perform MPP actions on
 * privateKey - Private key for contract address
 * Thor URL - Thor instance URL
 
@@ -45,12 +45,18 @@ If you intend to handle multiple contract addresses, you would have to use multi
 You can now use the mpp instance to perform any of commands below. Node MPP performs checks before
 sending state changing transactions to reduce transaction reverts and wasted energy.
 
+MPP transactions or calls on a contract would be made with the following format:
+
+```
+    await mpp.contractName.mppMethod
+```
+
 ## Transactions
 
 ### sponsor()
 
 ```
-await mpp.sponsor()
+await mpp.quest.sponsor()
 ```
 
 Volunteers to sponsor the contract using the default account linked to the MPP instance' private key.
@@ -58,7 +64,7 @@ Volunteers to sponsor the contract using the default account linked to the MPP i
 ### unsponsor()
 
 ```
-await mpp.unsponsor()
+await mpp.quest.unsponsor()
 ```
 
 Removes the default account from being a sponsor of the contract if it had been a sponsor earlier.
@@ -66,7 +72,7 @@ Removes the default account from being a sponsor of the contract if it had been 
 ### selectSponsor(sponsor)
 
 ```
-await mpp.selectSponsor(sponsor)
+await mpp.quest.selectSponsor(sponsor)
 ```
 
 **Parameters**
@@ -78,7 +84,7 @@ Selects a sponsor address. The sponsor must have volunteered to be a sponsor by 
 ### setMaster(master)
 
 ```
-await mpp.setMaster(master)
+await mpp.quest.setMaster(master)
 ```
 
 **Parameters**
@@ -90,7 +96,7 @@ Selects a master address. This can only be sent by the current contract master.
 ### addUser(address)
 
 ```
-await mpp.addUser(userAddress)
+await mpp.quest.addUser(userAddress)
 ```
 
 **Parameters**
@@ -102,7 +108,7 @@ Adds a new user to the MPP whitelist for the contract. Throws if the user has al
 ### removeUser(address)
 
 ```
-await mpp.removeUser(userAddress)
+await mpp.quest.removeUser(userAddress)
 ```
 
 **Parameters**
@@ -114,7 +120,7 @@ Removes a user from the MPP whitelist of the contract. Throws if the user has no
 #### setCreditPlan(credit, recoveryRate)
 
 ```
-await mpp.setCreditPlan(credit, recoveryRate)
+await mpp.quest.setCreditPlan(credit, recoveryRate)
 ```
 
 **Parameters**
@@ -129,7 +135,7 @@ Sets a new credit plan for the contract address as defined by the passed credit 
 ### isSponsor(address)
 
 ```
-const isSponsor = await mpp.isSponsor(address)
+const isSponsor = await mpp.quest.isSponsor(address)
 ```
 
 **Parameters**
@@ -141,7 +147,7 @@ Returns whether an address has volunteered to sponsor the contract.
 ### isUser(address)
 
 ```
-const isUser = await mpp.isUser(address)
+const isUser = await mpp.quest.isUser(address)
 ```
 
 **Parameters**
@@ -153,7 +159,7 @@ Returns whether an address has been added to the contract whitelist.
 ### currentSponsor()
 
 ```
-const currentSponsor = await mpp.currentSponsor()
+const currentSponsor = await mpp.quest.currentSponsor()
 ```
 
 Returns the current selected sponsor for the contract.
@@ -161,7 +167,7 @@ Returns the current selected sponsor for the contract.
 ### currentMaster()
 
 ```
-const currentMaster = await mpp.currentMaster()
+const currentMaster = await mpp.quest.currentMaster()
 ```
 
 Returns the current master for the contract.
@@ -169,7 +175,7 @@ Returns the current master for the contract.
 ### getCreditPlan()
 
 ```
-const creditPlan = await mpp.getCreditPlan()
+const creditPlan = await mpp.quest.getCreditPlan()
 ```
 
 Returns the active credit plan for the contract.
