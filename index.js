@@ -32,10 +32,11 @@ function MPP (
     // Add private keys
     web3.eth.accounts.wallet.add(privateKey)
 
+
     // Default transaction options
     const defaultTxOptions = {
         from: web3.eth.accounts.wallet[0].address,
-        gas: 1000000
+        gas: 1000000, // 1 M limit
     }
 
     function MppMethods (contractAddress) {
@@ -51,6 +52,7 @@ function MPP (
         } = require('./lib/contract/tx')(
             contractAddress,
             mppContract,
+            web3,
             defaultTxOptions
         )
 
